@@ -74,7 +74,7 @@
 		如果两个线程同时调用某个对象的同一方法，则它们都可以访问到这个对象的成员变量，但每个线程的局部变量副本是独立的。
 	内存整体结构
 	每启动一个进程，JVM就会在栈空间分配对应的线程栈，也叫Java方法栈。
-	JNI方法分配单独的本地方法栈。（非堆里？）
+	JNI方法分配单独的本地方法栈。
 	线程执行过程中，一般会有多个方法组成调用栈（Stack Trace），比如A调用B，B调用C。。。每执行到一个方法，就会创建对应的 栈帧（Frame）。
 	栈帧是一个逻辑上概念。具体的大小在一个方法编写完后基本就能确定。
 	堆内存 分为年轻代和老年代1:2
@@ -85,4 +85,47 @@
 		Code Cache,存放JIT编译后的本地机器码。
 	
 # JVM启动参数 
+	-开头的是标准参数
+	-D设置系统属性
+	-X 非标准参数 java -X 显示所有支持的非标准参数
+	-XX 非稳定参数  -XX:+-Flags    -XX:key=value
 	
+	1. 系统属性参数  -Dfile.encoding=UTF-8
+	2. 运行模式参数  -server   -Xmixed
+	3. 堆内存设置参数  -Xmx  -Xms  -Xmn -XX:MaxMetaspaceSize=size  -XX:MaxDirectMemorySize=size  -Xss
+	4. GC设置参数  -XX:+UseG1GC   -xx:+UseConcMarkSweepGC   -XX:+UseSerialGC  -XX:+UseParallelGC   -XX:+UnlockExperimentalVMOptions -XX:+UseZGC    -XX:+UnlockExperimentalVMOptions -XX:+UseShenandoahGC
+	5. 分析诊断参数  -XX:+HeapDumpOnOutOfMemoryError -Xmx256m ConsumeHeap
+	6. JavaAgent参数 -agentlib:libname[=options]
+	
+# JVM命令行工具
+jps/jinfo 查看 java 进程      jps -mlv
+jstat 查看 JVM 内部 gc 相关信息 jstat -gcutil pid 1000 1000    jstat -gc pid 1000 1000
+jmap 查看 heap 或类占用空间统计 jmap -heap pid    jmap -histo pid   jmap -dump:format=b,file=3826.hprof
+3826
+jstack 查看线程信息
+jcmd 执行 JVM 相关分析命令（整合命令）
+jrunscript/jjs 执行 js 命令
+
+#JVM 图形化工具 
+ jconsole
+ jvisualvm 
+ VisualGC
+ jmc
+ 
+ #GC
+ 标记清除算法（Mark and Sweep） 并行 GC 和 CMS 的基本原理
+	清除      产生碎片
+	复制      占用空间多
+	整理	  需要停止工作等待整理
+	
+ 串行 GC（Serial GC）/ParNewGC    
+ 并行 GC（Parallel GC）
+ CMS GC（Mostly Concurrent Mark and Sweep Garbage Collector）
+ G1 GC
+ 
+ 常用的组合为：
+（1）Serial+Serial Old 实现单线程的低延迟垃圾回收机制；
+（2）ParNew+CMS，实现多线程的低延迟垃圾回收机制；
+（3）Parallel Scavenge和Parallel Scavenge Old，实现多线程的高吞吐量垃圾回收机制
+
+脱离场景谈性能都是耍流氓
