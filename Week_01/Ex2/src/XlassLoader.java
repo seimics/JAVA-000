@@ -7,8 +7,7 @@ public class XlassLoader extends ClassLoader{
         try {
             //反射调用hello方法，是否有别的方法调用
             Object h = new XlassLoader().findClass("Hello").newInstance();
-            Method m = h.getClass().getDeclaredMethod("hello");
-            m.invoke(h);
+            h.getClass().getDeclaredMethod("hello").invoke(h);
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
         } catch (IllegalAccessException e) {

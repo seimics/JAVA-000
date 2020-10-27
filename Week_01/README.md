@@ -100,8 +100,7 @@
 # JVM命令行工具
 jps/jinfo 查看 java 进程      jps -mlv
 jstat 查看 JVM 内部 gc 相关信息 jstat -gcutil pid 1000 1000    jstat -gc pid 1000 1000
-jmap 查看 heap 或类占用空间统计 jmap -heap pid    jmap -histo pid   jmap -dump:format=b,file=3826.hprof
-3826
+jmap 查看 heap 或类占用空间统计 jmap -heap pid    jmap -histo pid   jmap -dump:format=b,file=3826.hprof 3826
 jstack 查看线程信息
 jcmd 执行 JVM 相关分析命令（整合命令）
 jrunscript/jjs 执行 js 命令
@@ -119,9 +118,9 @@ jrunscript/jjs 执行 js 命令
 	整理	  需要停止工作等待整理
 	
  串行 GC（Serial GC）/ParNewGC    
- 并行 GC（Parallel GC）
- CMS GC（Mostly Concurrent Mark and Sweep Garbage Collector）
- G1 GC
+ 并行 GC（Parallel GC）, MaxHeapSize= memory/4(if memory>1g); NewSize = MaxHeapSize/16 ; MaxNewSize= MaxHeapSize/3  young:mark-copy, old:mark-sweep-compact
+ CMS GC（Mostly Concurrent Mark and Sweep Garbage Collector）  cms 中 MaxNewSize = 64bit * 4 并行GC线程数 * 13/10   young: parallel STW mark-copy, old:parallel mark-sweep,  avoid long time of old gc
+ G1 GC NewSize:0.05*Heap, MaxNewSize:0.6*Heap, RegionSize:heap/2000, ConcGCThread:JavaThread/4, InitialingHeapOccupancyPercent(IHOP):45%,when old>45%heap->GC,  
  
  常用的组合为：
 （1）Serial+Serial Old 实现单线程的低延迟垃圾回收机制；
