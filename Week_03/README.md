@@ -62,5 +62,41 @@
 		Thread t1 = new Thread();
 		t1.start();
 	java层面  JVM层面  OS层面
-	
-	
+```
+public static void main(String[] args) {
+  Runnable task = new Runnable() {
+  @Override
+  public void run() {
+	try{
+	  Thread.sleep(5000);
+	}catch(InterrruptedException e) {
+	e.printStackTrace();
+	}
+  }
+  };
+  Thread t = new Thread(task);
+  thread.setName("test-thread-1");
+  thread.setDaemon(true);
+  thread.start();
+}
+```
+基础接口 Runnable
+重要实现 Thread implements Runnable
+Thread#start()    创建新线程
+Thread#run()      本线程调用
+
+Thread的状态改变操作
+1. Thread.sleep(long millis)    一定是当前线程调用此方法，当前线程进入TIMED_WAITING状态，但不释放对象锁，millis后线程自动苏醒进入就绪状态。作用：给其他线程执行机会的最好方式。
+2. Thread.yield()      当前线程放弃获取的CPU时间片，但不释放锁资源
+3. t.join()/t.join(long millis)  当前线程里调用其他线程t的join方法，当前线程进入WAITING/TIME_WAITING状态，当前线程不会释放已经持有的对象锁。线程t执行完毕或者millis时间到，当前线程进入就绪状态。
+4. obj.wait()  当前线程调用对象的wait()方法，当前线程释放对象锁，进入等待队列。依靠notify()/notifyAll()唤醒或wait(long timeout)timeout时间到自动唤醒。
+5. obj.notify() 唤醒在此对象监视器上等待的单个线程，选择是任意性的。
+
+Thread的中断与异常处理
+1. 线程内部自己处理异常，不溢出到外层
+2. 如果线程被Object.wait，Thread.join和Thread.sleep三种方法之一阻塞，此时调用该线程的interrupt()方法，那么该线程讲抛出一个InterruptedException中断异常
+该线程必须实现预备好处理此异常，从而提早地终结被阻塞状态。如果线程没有被阻塞，这时调用interrupt()将不起作用，直到执行到wait(),sleep(),join()时，才会抛出InterruptedException
+3. 如果是计算密集型的操作怎么办? 分段处理，每个片段检查一下状态，是否要终止。
+
+
+
